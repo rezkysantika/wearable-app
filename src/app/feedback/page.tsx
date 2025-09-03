@@ -119,7 +119,13 @@ export default function FeedbackPage() {
     const exParam = encodeURIComponent(exerciseId);
     const musclesParam = encodeURIComponent(musclesRaw || "");
     const phasesParam = encodeURIComponent(selectedPhaseNames.join(","));
-    router.push(`/monitor?exercise=${exParam}&muscles=${musclesParam}&phases=${phasesParam}`);
+    
+    const intensityValues = selectedPhaseNames.map(phaseName => {
+      return forms[phaseName]?.intensity || 0;
+    });
+    const intensityParam = encodeURIComponent(intensityValues.join(","));
+
+    router.push(`/monitor?exercise=${exParam}&muscles=${musclesParam}&phases=${phasesParam}&intensity=${intensityParam}`);
   };
 
   return (
@@ -178,7 +184,7 @@ export default function FeedbackPage() {
                 const cue = phaseData?.cues?.[0] ?? "No cue available.";
                 const videoSrc = `/videos/${exerciseId}-${slug(phaseName)}.mp4`;
 
-                const fill = ((st.intensity - 0) / 3) * 100;
+                const fill = ((st.intensity - 0) / 2) * 100;
 
                 return (
                   <div
@@ -221,7 +227,7 @@ export default function FeedbackPage() {
                       <input
                         type="range"
                         min={0}
-                        max={3}
+                        max={2}
                         step={1}
                         value={st.intensity}
                         onChange={(e) =>
@@ -232,7 +238,9 @@ export default function FeedbackPage() {
                         style={{ ["--fill" as any]: `${fill}%` }}
                       />
                       <div className="mt-2 flex justify-between w-full text-sm text-zinc-700 px-1">
-                        <span>0</span><span>1</span><span>2</span><span>3</span>
+                        <span>Not Act</span>
+                        <span>Low</span>
+                        <span>High</span>
                       </div>
                     </div>
 
@@ -313,7 +321,7 @@ export default function FeedbackPage() {
           border-left: 13px solid transparent;
           border-right: 13px solid transparent;
           border-top: 17px solid #4f46e5; /* indigo-600 */
-          margin-top: 0px; 
+          margin-top: -2px; 
           cursor: pointer;
         }
 
